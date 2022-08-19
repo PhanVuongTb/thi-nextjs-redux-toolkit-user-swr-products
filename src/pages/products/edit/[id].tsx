@@ -4,23 +4,24 @@ import { useRouter } from 'next/router';
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { mutate } from 'swr';
-import { getProduct } from '../../../api/products'
+import { read } from '../../../api/products'
 
 interface Props { }
 
 const edit = () => {
   const router = useRouter();
-  const { suaSp, data, error } = productsSlice();
   const { id } = router.query;
-  const { register, handleSubmit, formState: { errors } } = useForm<Products>();
+  console.log(id)
+  const { suaSp, data, error } = productsSlice();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<Products>();
 
   useEffect(() => {
-    const get = async () => {
-      (async () => {
-        const product = await getProduct(id)
-      })
+    const getProducts = async () => {
+      const product = await read(id);
+      console.log(product)
+      reset(product)
     }
-    get();
+    getProducts();
   }, [])
 
   const onSubmit = (data: Products) => {
@@ -34,10 +35,9 @@ const edit = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-3">
           <label className="form-label">Name</label>
-          <input type="text" {...register("name", { required: true })} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
-          {errors.name && <span>Không bỏ trống</span>}
+          <input type="text" className="form-control" {...register("name", { required: true, minLength: 5 })} />
+          {errors.name && <div className="form-text">Khong de trong, nhap tren 5 ky tu</div>}
         </div>
-
         <div className="mb-3">
           <label className="form-label">Img</label>
           <input type="text" {...register("img", { required: true })} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />

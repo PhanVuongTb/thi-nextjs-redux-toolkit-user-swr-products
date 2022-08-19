@@ -16,7 +16,7 @@ export const xoa = (id: any) => {
   return instance.delete(url)
 }
 
-export const getProduct = (id: any) => {
+export const read = (id: any) => {
   const url = `/products/${id}`;
   return instance.get(url)
 }
